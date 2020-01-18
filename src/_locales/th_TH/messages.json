@@ -59,6 +59,10 @@
     "message": "กลาง",
     "description": "middle"
   },
+  "settingLabelTouchpad": {
+    "message": "ทัชแพด",
+    "description": "touchpad"
+  },
   "settingLabelTimeoutActive": {
     "message": "Gesture timeout",
     "description": "Gesture timeout"

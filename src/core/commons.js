@@ -113,6 +113,18 @@ export function toSingleButton (pressedButton) {
 
 
 /**
+ * 
+ * @param {*} string 
+ */
+export function toSinglePoint (touchList) {
+  return {
+    screenX: Math.round(Array.prototype.reduce.call(touchList, (sum, touch) => sum + touch.screenX, 0) / touchList.length),
+    screenY: Math.round(Array.prototype.reduce.call(touchList, (sum, touch) => sum + touch.screenY, 0) / touchList.length)
+  };
+}
+
+
+/**
  * check if string is an url
  **/
 export function isURL (string) {

@@ -59,6 +59,10 @@
     "message": "középső",
     "description": "middle"
   },
+  "settingLabelTouchpad": {
+    "message": "touchpad",
+    "description": "touchpad"
+  },
   "settingLabelTimeoutActive": {
     "message": "Időtúllépés",
     "description": "Gesture timeout"

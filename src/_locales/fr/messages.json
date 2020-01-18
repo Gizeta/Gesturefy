@@ -59,6 +59,10 @@
     "message": "milieu",
     "description": "middle"
   },
+  "settingLabelTouchpad": {
+    "message": "pavé tactile",
+    "description": "touchpad"
+  },
   "settingLabelTimeoutActive": {
     "message": "Délai du geste",
     "description": "Gesture timeout"

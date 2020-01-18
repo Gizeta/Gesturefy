@@ -59,6 +59,10 @@
     "message": "stredné",
     "description": "middle"
   },
+  "settingLabelTouchpad": {
+    "message": "touchpad",
+    "description": "touchpad"
+  },
   "settingLabelTimeoutActive": {
     "message": "Časový limit gesta",
     "description": "Gesture timeout"

@@ -82,6 +82,18 @@ function toSingleButton (pressedButton) {
 
 
 /**
+ * 
+ * @param {*} string 
+ */
+function toSinglePoint (touchList) {
+  return {
+    screenX: Math.round(Array.prototype.reduce.call(touchList, (sum, touch) => sum + touch.screenX, 0) / touchList.length),
+    screenY: Math.round(Array.prototype.reduce.call(touchList, (sum, touch) => sum + touch.screenY, 0) / touchList.length)
+  };
+}
+
+
+/**
  * returns the selected text, if no text is selected it will return an empty string
  * inspired by https://stackoverflow.com/a/5379408/3771196
  **/
@@ -442,6 +454,7 @@ class ConfigManager {
 const LEFT_MOUSE_BUTTON = 1;
 const RIGHT_MOUSE_BUTTON = 2;
 const MIDDLE_MOUSE_BUTTON = 4;
+const TOUCHPAD = 9;
 
 const PASSIVE = 0;
 const PENDING = 1;
@@ -568,6 +581,7 @@ function removeEventListener (event, callback) {
  **/
 function enable () {
   targetElement.addEventListener('pointerdown', handleMousedown, true);
+  targetElement.addEventListener('touchstart', handleTouchstart, { capture: true, passive: false });
 
   ////////////////// IFRAME WORKAROUND START \\\\\\\\\\\\\\\\\\\\\\
   browser.runtime.onMessage.addListener(handleMessage);
@@ -579,6 +593,7 @@ function enable () {
  **/
 function disable () {
   targetElement.removeEventListener('pointerdown', handleMousedown, true);
+  targetElement.removeEventListener('touchstart', handleTouchstart, true);
 
   ////////////////// IFRAME WORKAROUND START \\\\\\\\\\\\\\\\\\\\\\
   browser.runtime.onMessage.removeListener(handleMessage);
@@ -649,9 +664,11 @@ function init (x, y) {
 
   // add gesture detection listeners
   targetElement.addEventListener('pointermove', handleMousemove, true);
+  targetElement.addEventListener('touchmove', handleTouchmove, { capture: true, passive: false });
   targetElement.addEventListener('dragstart', handleDragstart, true);
   targetElement.addEventListener('contextmenu', handleContextmenu, true);
   targetElement.addEventListener('pointerup', handleMouseup, true);
+  targetElement.addEventListener('touchend', handleTouchend, true);
   targetElement.addEventListener('pointerout', handleMouseout, true);
 }
 
@@ -726,7 +743,9 @@ function end () {
 function reset () {
   // remove gesture detection listeners
   targetElement.removeEventListener('pointermove', handleMousemove, true);
+  targetElement.removeEventListener('touchmove', handleTouchmove, true);
   targetElement.removeEventListener('pointerup', handleMouseup, true);
+  targetElement.removeEventListener('touchend', handleTouchend, true);
   targetElement.removeEventListener('contextmenu', handleContextmenu, true);
   targetElement.removeEventListener('pointerout', handleMouseout, true);
   targetElement.removeEventListener('dragstart', handleDragstart, true);
@@ -762,6 +781,30 @@ function handleMousedown (event) {
 
 
 /**
+ * Handles touchstart which will initialize the gesture and switch to the pedning state
+ **/
+function handleTouchstart (event) {
+  // on touch start and no supression key
+  if (event.isTrusted && mouseButton === TOUCHPAD && event.touches.length == 2 && (!suppressionKey || !event[suppressionKey])) {
+    const point = toSinglePoint(event.touches);
+
+    // buffer mouse event
+    mouseEventBuffer.push(new PointerEvent('pointerdown', {
+      'screenX': point.screenX,
+      'screenY': point.screenY,
+      'buttons': mouseButton,
+      'relatedTarget': event.target
+    }));
+
+    // init gesture
+    init(point.screenX, point.screenY);
+
+    event.preventDefault();
+  }
+}
+
+
+/**
  * Handles mousemove which will either start the gesture or update it
  **/
 function handleMousemove (event) {
@@ -786,6 +829,42 @@ function handleMousemove (event) {
 
     // prevent text selection
     if (mouseButton === LEFT_MOUSE_BUTTON) window.getSelection().removeAllRanges();
+  }
+}
+
+
+/**
+ * Handles touchmove which will either start the gesture or update it
+ */
+function handleTouchmove (event) {
+  // fallback if getCoalescedEvents is not defined + https://bugzilla.mozilla.org/show_bug.cgi?id=1450692
+  const events = event.getCoalescedEvents ? event.getCoalescedEvents() : [];
+  if (!events.length) events.push(event);
+
+  if (event.isTrusted && mouseButton === TOUCHPAD) {
+    const point = toSinglePoint(event.touches);
+
+    // buffer mouse events
+    mouseEventBuffer.push(...events.map(e => {
+      const point = toSinglePoint(e.touches); 
+      return new PointerEvent('pointermove', {
+        'screenX': point.screenX,
+        'screenY': point.screenY,
+        'buttons': mouseButton,
+        'relatedTarget': event.target
+      });
+    }));
+
+    // calculate distance between the current point and the reference point
+    const distance = getDistance(referencePoint.x, referencePoint.y, point.screenX, point.screenY);
+
+    // induce gesture
+    if (state === PENDING && distance > distanceThreshold)
+      start();
+
+    // update gesture
+    else if (state === ACTIVE && distance > distanceSensitivity)
+      update(point.screenX, point.screenY);
   }
 }
 
@@ -818,6 +897,30 @@ function handleMouseup (event) {
   if (event.isTrusted && event.button === toSingleButton(mouseButton) && (mouseButton === LEFT_MOUSE_BUTTON || mouseButton === MIDDLE_MOUSE_BUTTON)) {
     // buffer mouse event
     mouseEventBuffer.push(event);
+
+    if (state === ACTIVE || state === EXPIRED)
+      end();
+    // reset if state is pending
+    else if (state === PENDING)
+      reset();
+  }
+}
+
+
+/**
+ * Handles touchend and terminates the gesture
+ **/
+function handleTouchend (event) {
+  if (event.isTrusted && mouseButton === TOUCHPAD) {
+    const point = toSinglePoint(event.touches);
+
+    // buffer mouse event
+    mouseEventBuffer.push(new PointerEvent('pointerup', {
+      'screenX': point.screenX,
+      'screenY': point.screenY,
+      'buttons': mouseButton,
+      'relatedTarget': event.target
+    }));
 
     if (state === ACTIVE || state === EXPIRED)
       end();
@@ -2112,7 +2215,7 @@ MouseGestureController.addEventListener("start", (events) => {
   const firstEvent = events.shift();
   MouseGestureInterface.initialize(firstEvent.screenX, firstEvent.screenY);
   // expose target to global target variable
-  window.TARGET = firstEvent.target;
+  window.TARGET = firstEvent.target || firstEvent.relatedTarget;
 
   if (events.length > 0 && Config.get("Settings.Gesture.Trace.display")) {
     const points = events.map(event => ( {x: event.screenX, y: event.screenY} ));

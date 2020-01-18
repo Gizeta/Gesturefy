@@ -59,6 +59,10 @@
     "message": "centrale",
     "description": "middle"
   },
+  "settingLabelTouchpad": {
+    "message": "touchpad",
+    "description": "touchpad"
+  },
   "settingLabelTimeoutActive": {
     "message": "Intervallo del gesto",
     "description": "Gesture timeout"

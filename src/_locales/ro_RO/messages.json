@@ -59,6 +59,10 @@
     "message": "mijloc",
     "description": "middle"
   },
+  "settingLabelTouchpad": {
+    "message": "touchpad-ul",
+    "description": "touchpad"
+  },
   "settingLabelTimeoutActive": {
     "message": "Timp de expirare al gestului",
     "description": "Gesture timeout"

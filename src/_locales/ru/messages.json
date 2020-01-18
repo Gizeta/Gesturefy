@@ -59,6 +59,10 @@
     "message": "Cредняя",
     "description": "middle"
   },
+  "settingLabelTouchpad": {
+    "message": "тачпад",
+    "description": "touchpad"
+  },
   "settingLabelTimeoutActive": {
     "message": "Таймаут для жестов",
     "description": "Gesture timeout"

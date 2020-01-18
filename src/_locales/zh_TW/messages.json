@@ -59,6 +59,10 @@
     "message": "中鍵",
     "description": "middle"
   },
+  "settingLabelTouchpad": {
+    "message": "觸控板",
+    "description": "touchpad"
+  },
   "settingLabelTimeoutActive": {
     "message": "手勢超時",
     "description": "Gesture timeout"

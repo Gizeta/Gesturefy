@@ -59,6 +59,10 @@
     "message": "가운데",
     "description": "middle"
   },
+  "settingLabelTouchpad": {
+    "message": "터치 패드",
+    "description": "touchpad"
+  },
   "settingLabelTimeoutActive": {
     "message": "제스처 만료 시간",
     "description": "Gesture timeout"

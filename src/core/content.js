@@ -53,7 +53,7 @@ MouseGestureController.addEventListener("start", (events) => {
   const firstEvent = events.shift();
   MouseGestureInterface.initialize(firstEvent.screenX, firstEvent.screenY);
   // expose target to global target variable
-  window.TARGET = firstEvent.target;
+  window.TARGET = firstEvent.target || firstEvent.relatedTarget;
 
   if (events.length > 0 && Config.get("Settings.Gesture.Trace.display")) {
     const points = events.map(event => ( {x: event.screenX, y: event.screenY} ));

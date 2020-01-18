@@ -12,6 +12,7 @@
             <option value="1" data-i18n="settingLabelMouseButtonLeft"></option>
             <option value="2" data-i18n="settingLabelMouseButtonRight"></option>
             <option value="4" data-i18n="settingLabelMouseButtonMiddle"></option>
+            <option value="9" data-i18n="settingLabelTouchpad"></option>
           </select>
         </div>
       </div>

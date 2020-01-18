@@ -59,6 +59,10 @@
     "message": "mitten",
     "description": "middle"
   },
+  "settingLabelTouchpad": {
+    "message": "pekplatta",
+    "description": "touchpad"
+  },
   "settingLabelTimeoutActive": {
     "message": "Rörelsetimeout",
     "description": "Gesture timeout"

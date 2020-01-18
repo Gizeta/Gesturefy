@@ -59,6 +59,10 @@
     "message": "giữa",
     "description": "middle"
   },
+  "settingLabelTouchpad": {
+    "message": "bàn di chuột",
+    "description": "touchpad"
+  },
   "settingLabelTimeoutActive": {
     "message": "Thời gian đợi cử chỉ",
     "description": "Gesture timeout"

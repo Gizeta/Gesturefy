@@ -59,6 +59,10 @@
     "message": "中央",
     "description": "middle"
   },
+  "settingLabelTouchpad": {
+    "message": "タッチパッド",
+    "description": "touchpad"
+  },
   "settingLabelTimeoutActive": {
     "message": "ジェスチャーのタイムアウト",
     "description": "Gesture timeout"

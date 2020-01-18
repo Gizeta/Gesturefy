@@ -59,6 +59,10 @@
     "message": "μεσαίο",
     "description": "middle"
   },
+  "settingLabelTouchpad": {
+    "message": "touchpad",
+    "description": "touchpad"
+  },
   "settingLabelTimeoutActive": {
     "message": "Χρονικό όριο λήξης χειρονομίας",
     "description": "Gesture timeout"

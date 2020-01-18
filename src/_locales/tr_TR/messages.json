@@ -59,6 +59,10 @@
     "message": "orta",
     "description": "middle"
   },
+  "settingLabelTouchpad": {
+    "message": "dokunmatik yüzey",
+    "description": "touchpad"
+  },
   "settingLabelTimeoutActive": {
     "message": "Hareket zaman aşımı",
     "description": "Gesture timeout"
